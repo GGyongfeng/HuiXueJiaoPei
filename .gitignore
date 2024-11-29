@@ -1,6 +1,12 @@
-# 首先忽略所有文件
-*
-*/
+# 忽略文件夹
+front-manager/*
+front-teacher/*
+参考文件
+.vscode
+node_modules
+scripts
+uploads
+pnpm-lock.yaml
 
 # 不忽略 .gitignore 本身
 !.gitignore
