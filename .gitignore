@@ -1,0 +1,23 @@
+# 首先忽略所有文件
+*
+*/
+
+# 不忽略 .gitignore 本身
+!.gitignore
+
+# 保留 front-manager 文件夹及其内容
+!front-manager/
+!front-manager/src/
+!front-manager/src/**
+
+# 保留 front-teacher/src 文件夹及其内容
+!front-teacher/
+!front-teacher/src/
+!front-teacher/src/**
+
+# 保留 backend 文件夹及其内容
+!backend/
+!backend/**
+
+# 保留根目录的 index.js
+!index.js
