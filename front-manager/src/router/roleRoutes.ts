@@ -153,9 +153,18 @@ export const roleRoutes: AppRouteRecordRaw[] = [
       component: Home,
       name: 'Widgets',
       meta: {
-        title: '团队之家'
+        title: '组件'
       },
       children: [
+        {
+          path: '/widgets/icons',
+          component: () => import('@/components/Icons/icon-vue.vue'),
+          meta: {
+            title: '图标列表',
+            title_en: 'Icon List',
+            keepAlive: true
+          }
+        },
         {
           path: '/widgets/icon-list',
           component: () => import('@views/widgets/IconList.vue'),
@@ -324,6 +333,15 @@ export const roleRoutes: AppRouteRecordRaw[] = [
                   keepAlive: true
                 }
             },
+            {
+              path: '/widgets/icons-vue',
+              component: () => import('@/components/Icons/icon-vue.vue'),
+              meta: {
+                title: '图标列表',
+                title_en: 'Icon List',
+                keepAlive: true
+              }
+            }
         ]
       }
   ]

@@ -3,7 +3,7 @@
     <div class="content">
       <div class="left-wrap">
         <div class="user-wrap box-style">
-          <img class="bg" src="https://www.qiniu.lingchen.kim/any_design_pro_user_bg.png" />
+          <img class="bg" src="@imgs/user/user-background.png" />
           <img class="avatar" src="@imgs/user/avatar.png" />
           <h2 class="name">{{ userInfo.username }}</h2>
           <p class="des">汇学家教员工信息管理界面示例</p>
@@ -145,10 +145,10 @@
   const form = reactive({
     realName: '古永丰',
     nikeName: null,
-    email: '59301283@mall.com',
+    email: 'yongfenggu@tju.edu.cn',
     mobile: '15369998659',
     address: '天津市卫津路92号',
-    sex: '2',
+    sex: '1',
     des: '欢迎加入汇学家教大家庭'
   })
 
@@ -186,7 +186,7 @@
     }
   ]
 
-  const lableList: Array<string> = ['专注设计', '很有想法', '辣~', '大长腿', '川妹子', '海纳百川']
+  const lableList: Array<string> = ['专注设计', '很有想法', '帅哥~', '未来的富翁', '海纳百川']
 
   onMounted(() => {
     getDate()

@@ -163,6 +163,34 @@ class TutorsModel {
       .addPagination(pagination)
       .execute()
   }
+
+  // 取消成交
+  static async markAsUnDeal(id, staffId) {
+    const sql = `
+      UPDATE tutor_orders 
+      SET status = '未成交',
+          deal_time = NULL,
+          deal_teacher_id = NULL,
+          deal_staff_id = NULL,
+          updated_by = ?
+      WHERE id = ? AND is_deleted = FALSE
+    `
+    const result = await db.query(sql, [staffId, id])
+    return result.affectedRows > 0
+  }
+
+  // 在 TutorsModel 类中添加新方法
+  static async checkTeacherExists(teacherId) {
+    if (!teacherId) return true  // 如果没有指定教师ID，直接返回true
+    
+    const sql = `
+      SELECT COUNT(*) as count 
+      FROM teachers 
+      WHERE id = ?
+    `
+    const [result] = await db.query(sql, [teacherId])
+    return result.count > 0
+  }
 }
 
 module.exports = TutorsModel

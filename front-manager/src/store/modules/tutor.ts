@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { TutorType } from '@/api/model/tutorModel'
+import type { TutorType } from '@/types/tutorOrder'
 
 export const useTutorStore = defineStore('tutor', {
   state: () => ({

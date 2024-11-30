@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
 
     const filters = {
       keyword,
-      status: status || '未成交',
+      status: status,
       district,
       is_deleted: is_deleted === 'true' ? true : false,
       student_grade,

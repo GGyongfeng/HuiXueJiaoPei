@@ -1,4 +1,4 @@
-import type { TutorType } from '../model/tutorModel'
+import type { TutorType } from '@/types/tutorOrder'
 
 /**
  * 校验错误信息接口

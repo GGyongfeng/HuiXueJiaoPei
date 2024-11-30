@@ -269,8 +269,14 @@
             {
                 "id": 1101,
                 "title": "通知",
-                "title_en": "Document",
+                "title_en": "Notification",
                 "path": "/widgets/notification"
+            },
+            {
+                "id": 1104,
+                "title": "icons-vue列表",
+                "title_en": "icons-vue list",
+                "path": "/widgets/icons-vue"
             }
         ]
     }

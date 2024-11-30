@@ -1,7 +1,7 @@
 import request from '@/utils/http'
 import { ElLoading } from 'element-plus'
 import { fourDotsSpinnerSvg } from '@/assets/svg/loading'
-import { tutorQueryParams, TutorResponse, TutorType } from '../model/tutorModel'
+import { tutorQueryParams, TutorResponse, TutorType } from '@/types/tutorOrder'
 import { BaseResult } from '@/types/axios'
 
 /**

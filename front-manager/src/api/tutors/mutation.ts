@@ -1,6 +1,6 @@
 import request from '@/utils/http'
 import { BaseResult } from '@/types/axios'
-import { TutorType } from '../model/tutorModel'
+import { TutorType } from '@/types/tutorOrder'
 
 /**
  * 家教订单修改模块
@@ -52,6 +52,28 @@ export const mutationApis = {
     return request.put<BaseResult>({
       url: `/api/manager/tutors/status`,
       data: { id, status }
+    })
+  },
+
+  /**
+   * 更新订单成交状态
+   */
+  updateOrderDealStatus: (id: number, params: {
+    teacherId?: number | null
+    status: '已成交' | '未成交'
+  }) => {
+    console.log('发送的请求体:', {
+      id,
+      params,
+      data: params
+    })
+
+    return request.put<BaseResult>({
+      url: `/api/manager/tutors/deal/${id}`,
+      data: params,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
   }
 } 
