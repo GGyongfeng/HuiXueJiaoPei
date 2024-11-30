@@ -148,11 +148,7 @@
     }
 
     try {
-      console.log('登录请求：');
-      console.log('登录请求参数:', params);
-      
       const res = await UserService.login(params);
-      console.log('登录响应:', res);
 
       if (res.code === ApiStatus.success) {
         // 保存登录信息到本地存储（如 localStorage），用于持久化登录状态
@@ -211,5 +207,5 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './index';
+  @use './index';
 </style>

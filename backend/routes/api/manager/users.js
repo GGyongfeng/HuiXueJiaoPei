@@ -22,7 +22,6 @@ router.post('/login', async (req, res, next) => {
 
         // 只查询基本信息进行登录验证
         const staff = await staffModel.findByUsername(username);
-        console.log('staff:', staff);
         
         // 先检查用户是否存在
         if (!staff) {

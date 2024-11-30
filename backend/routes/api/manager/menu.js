@@ -7,8 +7,6 @@ const menuData = require(path.join(__dirname, '../../../data/menulist.json'));
 
 // 从 JSON 文件获取菜单列表
 router.get('/list', async (req, res) =>  {
-    console.log('req.header:', req.headers);
-    console.log('req.user:', req.user);
     try {
         res.json({
             code: 200,

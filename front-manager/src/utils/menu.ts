@@ -1,18 +1,27 @@
 import { AppRouteRecordRaw, router } from '@/router'
+import { RouteRecordRaw } from 'vue-router'
 import { MenuListType } from '@/types/menu'
 import { LanguageEnum } from '@/enums/appEnum'
 import { useUserStore } from '@/store/modules/user'
 
 // 动态匹配路由
-export function routerMatch(menuList: MenuListType[], roleRoutes: AppRouteRecordRaw[]) {
+export function routerMatch(
+  menuList: MenuListType[],    // 后端返回的菜单列表
+  roleRoutes: AppRouteRecordRaw[]  // 前端定义的权限路由
+) {
+  // 用于存储需要添加的路由
   const routesToAdd: AppRouteRecordRaw[] = []
 
+  // 处理每个菜单项
   menuList.forEach((item) => processMenuItem(item, roleRoutes, routesToAdd))
 
+  // 遍历需要添加的路由
   routesToAdd.forEach((route) => {
     const { name } = route
+    // 如果路由有名字且还未注册
     if (name && !router.hasRoute(name)) {
-      router.addRoute(route)
+      // 动态添加路由
+      router.addRoute(route as unknown as RouteRecordRaw)
     }
   })
 }

@@ -1,26 +1,16 @@
 import { fourDotsSpinnerSvg } from '@/assets/svg/loading'
-import { MenuListType } from '@/types/menu'
 import { ElLoading } from 'element-plus'
 import request from '@/utils/http'
-import { BaseResult } from '@/types/axios'
+import { MenuResponse, MenuResult } from './model/menuModel'
 
-// 定义后端返回的响应格式
-interface ApiResponse extends BaseResult {
-  code: number;
-  data: MenuListType[];
-  message: string;
-}
-
-// 定义返回类型接口
-interface MenuResponse {
-  menuList: MenuListType[];
-  closeLoading: () => void;
-}
-
-// 菜单接口
+/**
+ * 菜单服务
+ * 提供菜单相关的API方法
+ */
 export const menuService = {
   /**
-   * 获取菜单列表（实际接口）
+   * 获取菜单列表
+   * @returns Promise<MenuResult> 返回菜单列表数据和关闭加载状态的方法
    */
   getMenuList() {
     const loading = ElLoading.service({
@@ -33,8 +23,7 @@ export const menuService = {
     const url = '/api/manager/menu/list'
     
     try {
-      return new Promise<MenuResponse>((resolve, reject) => {
-        
+      return new Promise<MenuResult>((resolve, reject) => {
         const requestConfig = {
           url,
           headers: {
@@ -42,7 +31,7 @@ export const menuService = {
           }
         }
         
-        request.get<ApiResponse>(requestConfig)
+        request.get<MenuResponse>(requestConfig)
           .then(res => {
             if (res.code === 200) {
               resolve({

@@ -42,9 +42,10 @@ axiosInstance.interceptors.request.use(
     }
 
     // 打印请求信息
+    console.log('---------------------------------------')
     console.log('请求 URL:', request.url)
     console.log('请求方法:', request.method)
-    console.log('请求体request:', request)
+    console.log('请求体request:', request.data)
 
     return request
   },

@@ -24,78 +24,29 @@
     },
     {
         "id": 4,
-        "title": "家教单",
-        "title_en": "Article manguage",
+        "title": "家教订单",
+        "title_en": "Tutors Orders",
         "icon": "\ue7ae",
-        "path": "/article",
-        "name": "Article",
+        "path": "/tutors",
+        "name": "Tutors",
         "children": [
             {
                 "id": 201,
-                "title": "教单上传",
-                "title_en": "Article publish",
-                "path": "/article/article-publish",
-                "authList": [
-                    {
-                        "id": 2010,
-                        "title": "发布",
-                        "auth_mark": "article/article-publish/add"
-                    }
-                ]
+                "title": "订单列表",
+                "title_en": "Orders list",
+                "path": "/tutors/list"
             },
             {
                 "id": 202,
-                "title": "教单列表",
-                "title_en": "Article list",
-                "path": "/article/article-list",
-                "authList": [
-                    {
-                        "id": 2021,
-                        "title": "新增",
-                        "auth_mark": "add"
-                    },
-                    {
-                        "id": 2022,
-                        "title": "编辑",
-                        "auth_mark": "edit"
-                    }
-                ]
+                "title": "上传订单",
+                "title_en": "Create Order",
+                "path": "/tutors/create"
             },
             {
                 "id": 203,
-                "title": "教单管理",
-                "title_en": "Article category",
-                "path": "/article/classify",
-                "authList": [
-                    {
-                        "id": 2031,
-                        "title": "新增",
-                        "auth_mark": "add"
-                    },
-                    {
-                        "id": 2032,
-                        "title": "编辑",
-                        "auth_mark": "edit"
-                    },
-                    {
-                        "id": 2033,
-                        "title": "删除",
-                        "auth_mark": "delete"
-                    }
-                ]
-            },
-            {
-                "id": 204,
-                "title": "文章详情",
-                "title_en": "Article category",
-                "path": "/article/detail",
-                "noMenu": true
-            },
-            {
-                "id": 205,
-                "title": "留言管理",
-                "title_en": "Comment",
-                "path": "/article/comment"
+                "title": "编辑订单",
+                "title_en": "Edit Order",
+                "path": "/tutors/edit/:id"
             }
         ]
     },
@@ -208,16 +159,10 @@
                 "path": "/widgets/icon-list"
             },
             {
-                "id": 504,
-                "title": "图标选择器",
-                "title_en": "Icon selector",
-                "path": "/widgets/icon-selector"
-            },
-            {
-                "id": 505,
-                "title": "通知",
-                "title_en": "Notification",
-                "path": "/widgets/notification"
+                "id": 205,
+                "title": "留言管理",
+                "title_en": "Comment",
+                "path": "/article/comment"
             }
         ]
     },
@@ -310,6 +255,22 @@
                 "title": "官方文档",
                 "title_en": "Document",
                 "path": "https: //www.lingchen.kim/art-design-pro/docs/"
+            }
+        ]
+    },
+    {
+        "id": 11,
+        "title": "仅我可见",
+        "title_en": "Only I can see",
+        "name": "OnlyMe",
+        "icon": "\ue868",
+        "path": "/onlyme",
+        "children": [
+            {
+                "id": 1101,
+                "title": "通知",
+                "title_en": "Document",
+                "path": "/widgets/notification"
             }
         ]
     }

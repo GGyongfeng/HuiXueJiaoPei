@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const TutorsModel = require('../../../../models/tutorsModel')
+const resCode = require('../../../../constants/resCode')
 
 router.get('/', async (req, res) => {
   try {
@@ -44,7 +45,7 @@ router.get('/', async (req, res) => {
     const result = await TutorsModel.getList(filters, pagination)
     
     res.json({
-      code: 0,
+      code: resCode.SUCCESS,
       message: '获取成功',
       data: {
         list: result.list,
@@ -56,7 +57,7 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('获取家教订单列表失败:', error)
     res.json({
-      code: 500,
+      code: resCode.INTERNAL_ERROR,
       message: '获取列表失败'
     })
   }
