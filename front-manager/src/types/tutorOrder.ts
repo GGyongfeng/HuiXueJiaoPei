@@ -1,4 +1,5 @@
 import { BaseResult } from '@/types/axios'
+import type { QueryFilters } from './Filter'
 
 /**
  * 家教订单数据类型
@@ -44,17 +45,7 @@ export interface tutorQueryParams {
   page?: number            // 页码，默认1
   pageSize?: number        // 每页条数，默认20
   keyword?: string         // 关键词搜索
-  status?: '已成交' | '未成交'  // 订单状态
-  district?: '南开区' | '和平区' | '河西区' | '河东区' | '河北区' | '红桥区' | '津南区' | '滨海新区'  // 区域
-  is_deleted?: boolean     // 是否删除
-  student_grade?: '幼儿' | '小学' | '初一' | '初二' | '初三' | '高一' | '高二' | '高三' | '其他'  // 学生年级
-  student_gender?: '男' | '女'  // 学生性别
-  teacher_gender?: '男' | '女' | '无'  // 教师性别要求
-  teacher_type?: '在职老师' | '985学生' | '无'  // 教师类型
-  subjects?: string[]      // 补习科目（可多选）
-  teaching_type?: '一对一' | '一对多'  // 教学类型
-  city?: string           // 城市
-  order_tags?: string[]   // 订单标签（可多选）
+  filters?: QueryFilters   // 添加筛选条件属性
 }
 
 /**

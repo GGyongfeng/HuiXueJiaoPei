@@ -62,15 +62,12 @@ export const mutationApis = {
     teacherId?: number | null
     status: '已成交' | '未成交'
   }) => {
-    console.log('发送的请求体:', {
-      id,
-      params,
-      data: params
-    })
+    console.log('API调用参数 - id:', id)
+    console.log('API调用参数 - params:', params)
 
     return request.put<BaseResult>({
       url: `/api/manager/tutors/deal/${id}`,
-      data: params,
+      params: params,
       headers: {
         'Content-Type': 'application/json'
       }

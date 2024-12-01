@@ -10,7 +10,7 @@ declare module 'vue' {
     ArtTable: typeof import('./../components/Table/ArtTable.vue')['default']
     BackToTop: typeof import('./../components/Widgets/BackToTop.vue')['default']
     Breadcrumb: typeof import('./../components/Layout/Breadcrumb/index.vue')['default']
-    ColumnSelector: typeof import('./../components/tutors/ColumnSelector.vue')['default']
+    ColumnSelector: typeof import('./../views/tutors/components/TableColumnSelector/ColumnSelector.vue')['default']
     ColumnSettings: typeof import('./../components/tutors/tutorTable/components/ColumnSettings.vue')['default']
     CommentItem: typeof import('./../components/Pages/CommentWidget/CommentItem.vue')['default']
     CommentWidget: typeof import('./../components/Pages/CommentWidget/index.vue')['default']
@@ -79,7 +79,7 @@ declare module 'vue' {
     Templae: typeof import('./../components/Templae.vue')['default']
     TopBar: typeof import('./../components/Layout/TopBar/index.vue')['default']
     TutorSearch: typeof import('./../components/tutors/tutorSearch/tutorSearch.vue')['default']
-    TutorTable: typeof import('./../components/tutors/tutorTable.vue')['default']
+    TutorTable: typeof import('./../components/tutors/tutorTable/tutorTable.vue')['default']
     WorkTab: typeof import('./../components/Layout/WorkTab/index.vue')['default']
   }
   export interface ComponentCustomProperties {

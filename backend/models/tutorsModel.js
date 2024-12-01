@@ -84,7 +84,7 @@ class TutorsModel {
     return result.affectedRows > 0
   }
 
-  // 软删除家教订单
+  // ��删除家教订单
   static async delete(id, staffId) {
     const sql = `
       UPDATE tutor_orders 
@@ -102,13 +102,8 @@ class TutorsModel {
     const query = new TutorListQueryBuilder()
     
     return await query
-      .addBasicFilters(filters)
-      .addStudentFilters(filters)
-      .addTeacherFilters(filters)
-      .addSubjectsFilter(filters.subjects)
-      .addLocationFilters(filters)
+      .addFilters(filters)
       .addKeywordSearch(filters.keyword)
-      .addOrderTagsFilter(filters.order_tags)
       .addPagination(pagination)
       .execute()
   }

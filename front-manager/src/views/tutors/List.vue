@@ -3,7 +3,9 @@
         <div class="table-header">
             <TutorSearch @search="handleSearch" @column-change="handleColumnsChange" />
         </div>
-        <TutorTable :loading="loading" :data="tutorList" :total="total" :config="tableConfig" @page-change="handlePageChange" @edit="handleEdit" @delete="handleDelete" @visibility-change="handleVisibilityChange" @status-change="handleStatusChange" />
+        <div v-loading="loading">
+            <TutorTable :loading="loading" :data="tutorList" :total="total" :config="tableConfig" @page-change="handlePageChange" @edit="handleEdit" @delete="handleDelete" @visibility-change="handleVisibilityChange" @status-change="handleStatusChange" />
+        </div>
         <CreateDialog v-model:visible="createVisible" @success="handleSuccess" />
         <EditDialog 
           v-model:visible="editVisible" 
@@ -21,12 +23,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useTutorStore } from '@/store/modules/tutor'
-import TutorSearch from '@/components/tutors/tutorSearch/tutorSearch.vue'
-import TutorTable from '@/components/tutors/tutorTable.vue'
+import TutorSearch from './components/tutorSearch/tutorSearch.vue'
+import TutorTable from './components/tutorTable/tutorTable.vue'
 import type { tutorQueryParams, TutorType, TutorResponse } from '@/types/tutorOrder'
 import { TutorsService } from '@/api/tutors'
-import { CreateDialog, EditDialog, DeleteDialog } from '@/components/tutors/dialogs'
-import { DEFAULT_TABLE_CONFIG } from '@/types/tutorMenuList'
+import { CreateDialog, EditDialog, DeleteDialog } from '@/views/tutors/components/dialogs'
+import { DEFAULT_TABLE_CONFIG, ALL_COLUMNS } from '@/types/tutorMenuList'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { mutationApis } from '@/api/tutors/mutation'
 
@@ -52,14 +54,14 @@ const currentId = ref<number>()
 const tableConfig = ref({ ...DEFAULT_TABLE_CONFIG })
 
 // 获取订单列表函数
-const fetchTutorList = async () => {
+const fetchTutorList = async (params?: Partial<tutorQueryParams>) => {
     try {
-        const res = await TutorsService.getTutorList(queryParams.value)
+        // console.log('fetchTutorList - 参数选择:', params)
+        const searchParams = params || queryParams.value
+        const res = await TutorsService.getTutorList(searchParams)
 
         if (res.code === 200) {
             loading.value = true
-            // 检查数据赋值
-            console.log('总数:', res.data.total)
 
             // 确保每条数据都有状态值
             tutorList.value = res.data.list.map(item => ({
@@ -81,12 +83,8 @@ const fetchTutorList = async () => {
 
 // 处理搜索
 const handleSearch = (params: Partial<tutorQueryParams>) => {
-    queryParams.value = {
-        ...queryParams.value,
-        ...params,
-        page: 1
-    }
-    fetchTutorList()
+    // console.log('List组件收到搜索参数:', params)
+    fetchTutorList(params)
 }
 
 // 处理分页
@@ -97,7 +95,7 @@ const handlePageChange = (page: number) => {
 
 // 在组件挂载时执行
 onMounted(() => {
-    fetchTutorList()  // 页面加载时获取数据
+    initTableConfig()  // 初始化表格配置
 })
 
 // 成功回调
@@ -118,10 +116,36 @@ const handleDelete = (row: TutorType) => {
 }
 
 // 处理列变化
-const handleColumnsChange = (selectedColumns: string[]) => {
-  // 更新列配置
-  tableConfig.value.columns = DEFAULT_TABLE_CONFIG.columns
-    .filter(col => selectedColumns.includes(col.prop))
+const handleColumnsChange = (selectedColumns: string[]) => {  
+  // 从所有列中筛选用户选择的列，并保持其他配置不变
+  tableConfig.value = {
+    ...DEFAULT_TABLE_CONFIG,
+    columns: ALL_COLUMNS.filter(col => selectedColumns.includes(col.prop))
+  }
+}
+
+// 初始化表格配置
+const initTableConfig = () => {
+  // 从 localStorage 获取保存的列配置
+  const stored = localStorage.getItem('tutorTableColumns')
+  
+  if (stored) {
+    try {
+      const selectedColumns = JSON.parse(stored)
+      
+      // 使用保存的列配置初始化表格
+      tableConfig.value = {
+        ...DEFAULT_TABLE_CONFIG,
+        columns: ALL_COLUMNS.filter(col => selectedColumns.includes(col.prop))
+      }
+    } catch (e) {
+      console.error('解析列配置失败，使用默认配置:', e)
+      tableConfig.value = { ...DEFAULT_TABLE_CONFIG }
+    }
+  } else {
+    console.log('List - 未找到保存的列配置，使用默认配置')
+    tableConfig.value = { ...DEFAULT_TABLE_CONFIG }
+  }
 }
 
 const handleVisibilityChange = async (row: TutorType) => {
@@ -138,31 +162,25 @@ const handleVisibilityChange = async (row: TutorType) => {
 
 const handleStatusChange = async (row: TutorType) => {
   try {
-    // 检查当前状态
-    console.log('当前状态:', row.status)
-    
-    const newStatus = row.status === '已成交' ? '未成交' : '已成交'
-    console.log('新状态:', newStatus)
+    const newStatus = (row.status === '已成交' ? '未成交' : '已成交') as '已成交' | '未成交'
     
     // 如果是标记为已成交，才弹窗输入教师ID
     if (newStatus === '已成交') {
       ElMessageBox.prompt('请输入成交教师ID', '标记成交', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        inputPattern: /^\d+$/,
-        inputErrorMessage: '请输入有效的教师ID'
       }).then(async ({ value: teacherId }) => {
-        await mutationApis.updateOrderDealStatus(row.id!, {
-          teacherId: parseInt(teacherId),
+        const params = {
+          teacherId: teacherId ? parseInt(teacherId) : null,
           status: newStatus
-        })
+        }
+        
+        await mutationApis.updateOrderDealStatus(row.id!, params)
         ElMessage.success('更新成功')
         fetchTutorList()
-      }).catch(() => {
-        // 用户取消操作
       })
     } else {
-      // 如果是取消成交，直接更新状态
+      // 取消成交时，先确认
       const confirmResult = await ElMessageBox.confirm(
         '确定要取消该订单的成交状态吗？',
         '提示',
@@ -174,12 +192,12 @@ const handleStatusChange = async (row: TutorType) => {
       ).catch(() => false)
 
       if (confirmResult) {
-        // 确保发送完整的请求体
-        await mutationApis.updateOrderDealStatus(row.id!, {
-          status: '未成交',
-          teacherId: null,  // 显式设置为 null
-        })
-
+        const params = {
+          teacherId: null,
+          status: newStatus
+        }
+        
+        await mutationApis.updateOrderDealStatus(row.id!, params)
         ElMessage.success('更新成功')
         fetchTutorList()
       }

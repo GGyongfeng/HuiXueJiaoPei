@@ -5,13 +5,6 @@
       <el-form-item label="关键词">
         <el-input v-model="searchForm.keyword" placeholder="请输入关键词" />
       </el-form-item>
-      <el-form-item label="状态">
-        <el-select v-model="searchForm.status" placeholder="请选择状态">
-          <el-option label="全部" :value="''" />
-          <el-option label="已成交" value="已成交" />
-          <el-option label="未成交" value="未成交" />
-        </el-select>
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" class="icon-button" @click="handleSearch">
           <el-icon><Search /></el-icon>
@@ -44,13 +37,6 @@
         <el-form-item label="关键词">
           <el-input v-model="searchForm.keyword" placeholder="请输入关键词" />
         </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="searchForm.status" placeholder="请选择状态">
-            <el-option label="全部" :value="''" />
-            <el-option label="已成交" value="已成交" />
-            <el-option label="未成交" value="未成交" />
-          </el-select>
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" block class="icon-button" @click="handleMobileSearch">
             <el-icon><Search /></el-icon>
@@ -68,10 +54,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Search, Setting, Refresh } from '@element-plus/icons-vue'
 import type { tutorQueryParams } from '@/types/tutorOrder'
-import ColumnSelector from '../ColumnSelector.vue'
+import ColumnSelector from '../TableColumnSelector/ColumnSelector.vue'
+import { useTutorStore } from '@/store/modules/tutor'
+import { storeToRefs } from 'pinia'
 import './style.scss'
 
 const emit = defineEmits<{
@@ -79,24 +67,47 @@ const emit = defineEmits<{
   (e: 'column-change', columns: string[]): void
 }>()
 
+const tutorStore = useTutorStore()
+const { filterSelections, searchParams } = storeToRefs(tutorStore)
+
 const searchForm = ref<Partial<tutorQueryParams>>({
   keyword: '',
-  status: undefined
 })
 
 const showMobileSearch = ref(false)
 
 const handleSearch = () => {
   const params = { ...searchForm.value }
-  emit('search', params)
+  const filters: Record<string, string[]> = {}
+  Object.entries(filterSelections.value).forEach(([prop, filter]) => {
+    if (filter.selected.length > 0) {
+      filters[prop] = filter.selected
+    }
+  })
+  
+  const searchParams = {
+    ...params,
+    page: 1,
+    pageSize: 20,
+    filters
+  }
+  
+  tutorStore.updateSearchParams(searchParams)
+  console.log('搜索参数:', searchParams)
+  emit('search', searchParams)
 }
 
 const handleReset = () => {
   searchForm.value = {
     keyword: '',
-    status: undefined
   }
-  emit('search', {})
+  tutorStore.clearFilterSelections()
+  tutorStore.resetSearchParams()
+  
+  emit('search', {
+    page: 1,
+    pageSize: 20
+  })
 }
 
 const handleMobileSearch = () => {
@@ -108,4 +119,15 @@ const handleMobileReset = () => {
   handleReset()
   showMobileSearch.value = false
 }
+
+// 在组件挂载时初始化搜索参数
+onMounted(() => {
+  tutorStore.initSearchParams()
+  
+  // 恢复表单值
+  searchForm.value.keyword = searchParams.value.keyword || ''
+  
+  // 触发搜索
+  emit('search', searchParams.value)
+})
 </script> 

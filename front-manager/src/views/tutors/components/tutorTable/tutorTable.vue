@@ -1,9 +1,25 @@
 <template>
   <div class="tutor-table">
+    <FilterTags 
+      :config="config"
+    />
+
     <el-table v-loading="loading" :data="data" :border="config.border" :stripe="config.stripe" style="width: 100%">
-      <!-- 只渲染 visible 为 true 的列 -->
       <template v-for="col in visibleColumns" :key="col.prop">
-        <el-table-column :prop="col.prop" :label="col.label" :width="col.width" :fixed="col.fixed">
+        <el-table-column 
+          :prop="col.prop" 
+          :label="col.label" 
+          :width="col.width" 
+          :fixed="col.fixed"
+        >
+          <!-- 自定义表头 -->
+          <template #header>
+            <TableHeader
+              :column="col"
+            />
+          </template>
+
+          <!-- 单元格内容 -->
           <template #default="scope">
             <template v-if="col.slot === 'status'">
               <el-tag :type="scope.row.status === '已成交' ? 'success' : 'warning'">
@@ -11,18 +27,21 @@
               </el-tag>
             </template>
             <template v-else-if="col.slot === 'operation'">
-              <el-button link type="primary" @click="handleEdit(scope.row)" class="icon-button">
+              <el-button link type="primary" @click="handleEdit(scope.row)" class="icon-button">  
+                <!-- 编辑 -->
                 <el-icon>
                   <Edit />
                 </el-icon>
               </el-button>
               <el-button link type="danger" @click="handleDelete(scope.row)" class="icon-button">
+                <!-- 删除 -->
                 <el-icon>
                   <Delete />
                 </el-icon>
               </el-button>
               <el-button link :type="scope.row.is_visible ? 'info' : 'warning'" @click="handleVisibility(scope.row)"
                 class="icon-button">
+                <!-- 显示/隐藏 -->
                 <el-icon>
                   <View v-if="scope.row.is_visible" />
                   <Hide v-else />
@@ -34,6 +53,7 @@
                 @click="handleStatus(scope.row)"
                 class="icon-button"
               >
+                <!-- 成交/未成交 -->
                 <el-icon>
                   <Select v-if="scope.row.status === '已成交'" />
                   <CircleCheck v-else />
@@ -60,10 +80,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { TutorType } from '@/types/tutorOrder'
-import { DEFAULT_TABLE_CONFIG, type TableConfig } from '@/types/tutorMenuList'
-import { Delete, Edit, View, Hide, Select, CircleCheck } from '@element-plus/icons-vue'
+import { DEFAULT_TABLE_CONFIG, ALL_COLUMNS, type TableConfig } from '@/types/tutorMenuList'
+import { Delete, Edit, View, Hide, Select, CircleCheck, ArrowDown } from '@element-plus/icons-vue'
+import FilterTags from '../FilterTags/FilterTags.vue'
+import TableHeader from './TableHeader.vue'
+import { useTutorStore } from '@/store/modules/tutor'
 
 // Props 定义
 const props = defineProps<{
@@ -82,11 +105,16 @@ const emit = defineEmits<{
 }>()
 
 const currentPage = ref(1)
-const config = computed(() => props.config || DEFAULT_TABLE_CONFIG)
+
+const config = computed(() => {
+  const finalConfig = props.config || DEFAULT_TABLE_CONFIG
+  return finalConfig
+})
 
 // 计算可见的列
 const visibleColumns = computed(() => {
-  return config.value.columns.filter(col => col.visible)
+  const visible = config.value.columns.filter(col => col.visible)
+  return visible
 })
 
 // 事件处理
@@ -109,6 +137,17 @@ const handleVisibility = (row: TutorType) => {
 const handleStatus = (row: TutorType) => {
   emit('status-change', row)
 }
+
+const tutorStore = useTutorStore()
+
+// 在组件挂载时初始化筛选条件
+onMounted(() => {
+  // console.log('tutorTable - 初始化', {
+  //   显示列数: visibleColumns.value.length,
+  //   所有列数: ALL_COLUMNS.length
+  // })
+  tutorStore.initFilterSelections(ALL_COLUMNS)
+})
 </script>
 
 <style lang="scss" scoped>

@@ -19,22 +19,31 @@ router.get('/', async (req, res) => {
       subjects,
       teaching_type,
       city,
-      order_tags
+      order_tags,
+      student_level,
+      is_visible
     } = req.query
+
+    const processArrayParam = (param) => {
+      if (!param) return undefined
+      return Array.isArray(param) ? param : [param]
+    }
 
     const filters = {
       keyword,
-      status: status,
-      district,
+      status: processArrayParam(status),
+      district: processArrayParam(district),
       is_deleted: is_deleted === 'true' ? true : false,
-      student_grade,
-      student_gender,
-      teacher_gender,
-      teacher_type,
-      subjects: subjects ? (Array.isArray(subjects) ? subjects : [subjects]) : undefined,
-      teaching_type,
-      city,
-      order_tags: order_tags ? (Array.isArray(order_tags) ? order_tags : [order_tags]) : undefined
+      student_grade: processArrayParam(student_grade),
+      student_gender: processArrayParam(student_gender),
+      teacher_gender: processArrayParam(teacher_gender),
+      teacher_type: processArrayParam(teacher_type),
+      subjects: processArrayParam(subjects),
+      teaching_type: processArrayParam(teaching_type),
+      city: processArrayParam(city),
+      order_tags: processArrayParam(order_tags),
+      student_level: processArrayParam(student_level),
+      is_visible: processArrayParam(is_visible)
     }
 
     const pagination = {

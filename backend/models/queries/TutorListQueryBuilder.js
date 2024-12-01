@@ -1,4 +1,5 @@
 const db = require('../../data/db')
+const { FILTER_FIELDS } = require('../../types/filters')
 
 /**
  * 家教订单列表查询构建器
@@ -29,108 +30,45 @@ class TutorListQueryBuilder {
   }
 
   /**
-   * 添加基础筛选条件
+   * 添加通用筛选条件
    * @param {Object} filters - 筛选条件对象
-   * @param {boolean} filters.is_deleted - 是否已删除
-   * @param {string} filters.status - 订单状态
-   * @returns {TutorListQueryBuilder} 返回this以支持链式调用
-   */
-  addBasicFilters(filters) {
-    if (filters.is_deleted !== undefined) {
-      this.sql += ` AND t.is_deleted = ?`
-      this.values.push(filters.is_deleted)
-    }
-
-    if (filters.status) {
-      this.sql += ` AND t.status = ?`
-      this.values.push(filters.status)
-    }
-
-    return this
-  }
-
-  /**
-   * 添加学生相关的筛选条件
-   * @param {Object} filters - 筛选条件对象
-   * @param {string} filters.student_grade - 学生年级
-   * @param {string} filters.student_gender - 学生性别
    * @returns {TutorListQueryBuilder}
    */
-  addStudentFilters(filters) {
-    if (filters.student_grade) {
-      this.sql += ` AND t.student_grade = ?`
-      this.values.push(filters.student_grade)
-    }
-
-    if (filters.student_gender) {
-      this.sql += ` AND t.student_gender = ?`
-      this.values.push(filters.student_gender)
-    }
-    return this
-  }
-
-  /**
-   * 添加教师相关的筛选条件
-   * @param {Object} filters - 筛选条件对象
-   * @param {string} filters.teacher_gender - 教师性别要求
-   * @param {string} filters.teacher_type - 教师类型
-   * @returns {TutorListQueryBuilder}
-   */
-  addTeacherFilters(filters) {
-    if (filters.teacher_gender) {
-      this.sql += ` AND t.teacher_gender = ?`
-      this.values.push(filters.teacher_gender)
-    }
-
-    if (filters.teacher_type) {
-      this.sql += ` AND t.teacher_type = ?`
-      this.values.push(filters.teacher_type)
-    }
-    return this
-  }
-
-  /**
-   * 添加科目筛选条件
-   * 支持单个科目或多个科目的查询
-   * @param {string|string[]} subjects - 科目或科目数组
-   * @returns {TutorListQueryBuilder}
-   */
-  addSubjectsFilter(subjects) {
-    if (subjects) {
-      if (Array.isArray(subjects)) {
-        // 处理多个科目的情况
-        this.sql += ` AND (FIND_IN_SET(?, t.subjects)`
-        this.values.push(subjects[0])
-        for (let i = 1; i < subjects.length; i++) {
-          this.sql += ` OR FIND_IN_SET(?, t.subjects)`
-          this.values.push(subjects[i])
+  addFilters(filters) {
+    FILTER_FIELDS.forEach(field => {
+      if (filters[field] && filters[field].length > 0) {
+        if (field === 'subjects' || field === 'order_tags') {
+          // 特殊处理 FIND_IN_SET 的字段
+          this.sql += ` AND (`
+          this.sql += filters[field].map(() => `FIND_IN_SET(?, t.${field})`).join(' OR ')
+          this.sql += `)`
+          this.values.push(...filters[field])
+        } else {
+          // 普通 IN 查询
+          this.sql += ` AND t.${field} IN (${filters[field].map(() => '?').join(',')})`
+          this.values.push(...filters[field])
         }
-        this.sql += `)`
-      } else {
-        // 处理单个科目的情况
-        this.sql += ` AND FIND_IN_SET(?, t.subjects)`
-        this.values.push(subjects)
       }
-    }
+    })
     return this
   }
 
   /**
    * 添加地区相关的筛选条件
    * @param {Object} filters - 筛选条件对象
-   * @param {string} filters.district - 区域
-   * @param {string} filters.city - 城市
+   * @param {string[]} filters.district - 区域
+   * @param {string[]} filters.city - 城市
    * @returns {TutorListQueryBuilder}
    */
   addLocationFilters(filters) {
-    if (filters.district) {
-      this.sql += ` AND t.district = ?`
-      this.values.push(filters.district)
+    if (filters.district && filters.district.length > 0) {
+      this.sql += ` AND t.district IN (${filters.district.map(() => '?').join(',')})`
+      this.values.push(...filters.district)
     }
 
-    if (filters.city) {
-      this.sql += ` AND t.city = ?`
-      this.values.push(filters.city)
+    if (filters.city && filters.city.length > 0) {
+      this.sql += ` AND t.city IN (${filters.city.map(() => '?').join(',')})`
+      this.values.push(...filters.city)
     }
     return this
   }
@@ -145,29 +83,6 @@ class TutorListQueryBuilder {
     if (keyword) {
       this.sql += ` AND (t.tutor_code LIKE ? OR t.requirement_desc LIKE ?)`
       this.values.push(`%${keyword}%`, `%${keyword}%`)
-    }
-    return this
-  }
-
-  /**
-   * 添加订单标签筛选条件
-   * 支持单个标签或多个标签的查询
-   * @param {string|string[]} orderTags - 订单标签或标签数组
-   * @returns {TutorListQueryBuilder}
-   */
-  addOrderTagsFilter(orderTags) {
-    if (orderTags) {
-      if (Array.isArray(orderTags)) {
-        // 处理多个标签的情况
-        this.sql += ` AND (`
-        this.sql += orderTags.map(() => `FIND_IN_SET(?, t.order_tags)`).join(' OR ')
-        this.sql += `)`
-        this.values.push(...orderTags)
-      } else {
-        // 处理单个标签的情况
-        this.sql += ` AND FIND_IN_SET(?, t.order_tags)`
-        this.values.push(orderTags)
-      }
     }
     return this
   }
@@ -188,6 +103,45 @@ class TutorListQueryBuilder {
     const offset = (page - 1) * pageSize
     this.sql += ` LIMIT ${offset}, ${pageSize}`
     
+    return this
+  }
+
+  /**
+   * 添加教学类型筛选条件
+   * @param {Object} filters - 筛选条件对象
+   * @returns {TutorListQueryBuilder}
+   */
+  addTeachingTypeFilter(filters) {
+    if (filters.teaching_type && filters.teaching_type.length > 0) {
+      this.sql += ` AND t.teaching_type IN (${filters.teaching_type.map(() => '?').join(',')})`
+      this.values.push(...filters.teaching_type)
+    }
+    return this
+  }
+
+  /**
+   * 添加学生水平筛选条件
+   * @param {Object} filters - 筛选条件对象
+   * @returns {TutorListQueryBuilder}
+   */
+  addStudentLevelFilter(filters) {
+    if (filters.student_level && filters.student_level.length > 0) {
+      this.sql += ` AND t.student_level IN (${filters.student_level.map(() => '?').join(',')})`
+      this.values.push(...filters.student_level)
+    }
+    return this
+  }
+
+  /**
+   * 添加可见状态筛选条件
+   * @param {Object} filters - 筛选条件对象
+   * @returns {TutorListQueryBuilder}
+   */
+  addVisibilityFilter(filters) {
+    if (filters.is_visible && filters.is_visible.length > 0) {
+      this.sql += ` AND t.is_visible IN (${filters.is_visible.map(() => '?').join(',')})`
+      this.values.push(...filters.is_visible)
+    }
     return this
   }
 

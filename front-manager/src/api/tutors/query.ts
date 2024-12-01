@@ -1,6 +1,5 @@
 import request from '@/utils/http'
 import { ElLoading } from 'element-plus'
-import { fourDotsSpinnerSvg } from '@/assets/svg/loading'
 import { tutorQueryParams, TutorResponse, TutorType } from '@/types/tutorOrder'
 import { BaseResult } from '@/types/axios'
 
@@ -8,6 +7,35 @@ import { BaseResult } from '@/types/axios'
  * 家教订单查询模块
  * 包含所有查询相关的API方法
  */
+
+// 参数转换函数
+const transformParams = (params: tutorQueryParams) => {
+  // console.log('转换前的参数:', params)
+  
+  const result: Record<string, string | number | string[]> = {
+    page: params.page || 1,
+    pageSize: params.pageSize || 20
+  }
+  
+  // 添加关键词
+  if (params.keyword) {
+    result.keyword = params.keyword
+  }
+  
+  // 处理筛选条件
+  if (params.filters) {
+    Object.entries(params.filters).forEach(([key, values]) => {
+      if (values.length > 0) {
+        result[key] = values
+      }
+    })
+  }
+  
+  // console.log('转换后的参数:', result)
+  
+  return result
+}
+
 export const queryApis = {
   /**
    * 获取家教订单列表
@@ -15,25 +43,24 @@ export const queryApis = {
    * @returns 返回订单列表数据和总数
    */
   getTutorList: async (params: tutorQueryParams) => {
+    const transformedParams = transformParams(params)
     const loading = ElLoading.service({
       lock: true,
-      background: 'rgba(0, 0, 0, 0)',
-      svg: fourDotsSpinnerSvg,
-      svgViewBox: '0 0 40 40'
+      text: '加载中...',
+      background: 'rgba(0, 0, 0, 0.7)'
     })
 
     try {
       const result = await request.get<TutorResponse>({
         url: '/api/manager/tutors/list',
-        params
+        params: transformedParams
       })
-      console.log('请求结果：', result)
-      loading.close()
       return result
     } catch (error) {
-      console.error('请求错误：', error)
-      loading.close()
+      console.error('获取家教订单列表失败:', error)
       throw error
+    } finally {
+      loading.close()
     }
   },
 
