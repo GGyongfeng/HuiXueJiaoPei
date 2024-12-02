@@ -1,4 +1,4 @@
-import request from '@/utils/http'
+import request from '@/middleware'
 import { ElLoading } from 'element-plus'
 import { tutorQueryParams, TutorResponse, TutorType } from '@/types/tutorOrder'
 import { BaseResult } from '@/types/axios'
@@ -55,6 +55,7 @@ export const queryApis = {
         url: '/api/manager/tutors/list',
         params: transformedParams
       })
+      console.log("query.ts - 订单列表请求结果",result)
       return result
     } catch (error) {
       console.error('获取家教订单列表失败:', error)

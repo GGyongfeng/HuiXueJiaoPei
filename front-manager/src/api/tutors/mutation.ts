@@ -1,4 +1,4 @@
-import request from '@/utils/http'
+import request from '@/middleware'
 import { BaseResult } from '@/types/axios'
 import { TutorType } from '@/types/tutorOrder'
 
@@ -25,10 +25,13 @@ export const mutationApis = {
    * @returns 返回更新结果
    */
   updateTutor: (data: TutorType) => {
+    const { id, ...restData } = data
+    
     return request.put<BaseResult>({
-      url: `/api/manager/tutors/update`,
-      data
+      url: `/api/manager/tutors/update/${id}`,
+      data: restData
     })
+    
   },
 
   /**
@@ -37,9 +40,14 @@ export const mutationApis = {
    * @returns 返回删除结果
    */
   deleteTutor: (id: number) => {
-    return request.del<BaseResult>({
-      url: `/api/manager/tutors/delete/${id}`
-    })
+    try {
+      return request.del<BaseResult>({
+        url: `/api/manager/tutors/delete/${id}`
+      })
+    } catch (error) {
+      console.error('删除请求失败:', error)
+      return Promise.reject(error)
+    }
   },
 
   /**
@@ -62,12 +70,10 @@ export const mutationApis = {
     teacherId?: number | null
     status: '已成交' | '未成交'
   }) => {
-    console.log('API调用参数 - id:', id)
-    console.log('API调用参数 - params:', params)
 
     return request.put<BaseResult>({
       url: `/api/manager/tutors/deal/${id}`,
-      params: params,
+      data: params,
       headers: {
         'Content-Type': 'application/json'
       }

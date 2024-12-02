@@ -1,10 +1,8 @@
 import axios, { InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/modules/user'
-import EmojiText from '../emojo'
-import { ref } from 'vue'
 import { router } from '@/router'
-import { getMessage } from './msg'
+import { getErrorMessage } from './errorCode'
 
 const axiosInstance = axios.create({
   timeout: 15000, // 请求超时时间(毫秒)
@@ -31,6 +29,16 @@ const axiosInstance = axios.create({
 // 请求拦截器
 axiosInstance.interceptors.request.use(
   (request) => {
+    // 打印请求信息
+    console.log('=======================================')
+    console.log('请求拦截器:', {
+      URL: request.url,
+      方法: request.method,
+      数据: request.data,
+      参数: request.params,
+      请求头: request.headers
+    })
+
     const userStore = useUserStore()
     const { token } = userStore.info
 
@@ -41,28 +49,32 @@ axiosInstance.interceptors.request.use(
       })
     }
 
-    // 打印请求信息
-    console.log('=======================================')
-    console.log('请求 URL:', request.url)
-    console.log('请求方法:', request.method)
-    // console.log('请求体request:', request.data)
-
     return request
   },
   (error) => {
-    console.error('请求错误:', error)
     return Promise.reject(error)
   }
 )
 
 // 响应拦截器
 axiosInstance.interceptors.response.use(
-  // 第一个函数处理成功的响应
-  (response: AxiosResponse) => response,  // 直接返回响应数据
+  // 第一个函数处理响应
+  (response: AxiosResponse) => {
+    const { code, message, data } = response.data
+
+    // 处理成功响应
+    if (code === 200) {
+      return response
+    }
+
+    // 显示错误消息
+    ElMessage.error(getErrorMessage(code, message))
+    return Promise.reject(new Error(message))
+  },
   
-  // 第二个函数处理错误情况
+  // 第二个函数处理网络错误
   (error) => {
-    // 获取错误状态码和信息
+    console.log('响应错误:', error)
     const status = error.response?.status
     const errorMessage = error.response?.data?.message
 
@@ -71,7 +83,13 @@ axiosInstance.interceptors.response.use(
       const userStore = useUserStore()
       userStore.logOut()
       router.push('/login')
-      ElMessage.error(errorMessage || getMessage(401))
+      ElMessage.error(getErrorMessage(401, errorMessage))
+      return Promise.reject(error)
+    }
+
+    // 处理 HTTP 状态码错误
+    if (status) {
+      ElMessage.error(getErrorMessage(status, errorMessage))
       return Promise.reject(error)
     }
 
@@ -79,11 +97,7 @@ axiosInstance.interceptors.response.use(
     if (axios.isCancel(error)) {
       console.log('repeated request: ' + error.message)
     } else {
-      ElMessage.error(
-        errorMessage
-          ? `${errorMessage} ${EmojiText[500]}`
-          : `请求超时或服务器异常！${EmojiText[500]}`
-      )
+      ElMessage.error(getErrorMessage(500, errorMessage || '请求超时或服务器异常'))
     }
     
     return Promise.reject(error)
@@ -92,11 +106,6 @@ axiosInstance.interceptors.response.use(
 
 // 请求
 async function request<T = any>(config: AxiosRequestConfig): Promise<T> {
-  // 将 POST | PUT 请求的参数放入 data 中，并清空 params
-  if (config.method === 'POST' || config.method === 'PUT') {
-    config.data = config.params
-    config.params = {}
-  }
   try {
     const res = await axiosInstance.request<T>({ ...config })
     return res.data

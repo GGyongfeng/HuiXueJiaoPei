@@ -90,7 +90,7 @@
   import { ElMessage, ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
   import { HOME_PAGE } from '@/router'
-  import { ApiStatus } from '@/utils/http/status'
+  import { ApiStatus } from '@/middleware/status'
   import axios from 'axios'
   import { getCssVariable, getGreeting } from '@/utils/utils'
   import { UserService } from '@/api/usersApi'

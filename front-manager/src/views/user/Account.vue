@@ -103,11 +103,11 @@
             <el-option label="女" :value="2" />
           </el-select>
         </el-form-item>
-        <el-form-item label="部门" prop="dep">
+        <el-form-item label="学科" prop="dep">
           <el-select v-model="formData.dep">
-            <el-option label="董事会部" :value="1" />
-            <el-option label="市场部" :value="2" />
-            <el-option label="技术部" :value="3" />
+            <el-option label="语文" :value="1" />
+            <el-option label="数学" :value="2" />
+            <el-option label="英语" :value="3" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -162,7 +162,7 @@
     { name: '用户名', show: true },
     { name: '手机号', show: true },
     { name: '性别', show: true },
-    { name: '部门', show: true },
+    { name: '部门', show: false },
     { name: '状态', show: true },
     { name: '创建日期', show: true }
   ])

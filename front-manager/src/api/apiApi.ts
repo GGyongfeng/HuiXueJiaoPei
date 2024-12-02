@@ -1,4 +1,4 @@
-import request from '@/utils/http'
+import request from '@/middleware'
 import { BaseResult } from '@/types/axios'
 
 // api

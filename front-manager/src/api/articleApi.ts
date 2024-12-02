@@ -1,4 +1,4 @@
-import request from '@/utils/http'
+import request from '@/middleware'
 import { PaginationResult, BaseResult } from '@/types/axios'
 import { ArticleType, ArticleCategoryType } from './model/articleModel'
 

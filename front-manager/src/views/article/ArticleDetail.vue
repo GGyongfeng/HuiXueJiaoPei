@@ -11,7 +11,7 @@
 <script setup lang="ts">
   import '@/assets/styles/markdown.scss'
   import '@/assets/styles/one-dark-pro.scss'
-  import { ApiStatus } from '@/utils/http/status'
+  import { ApiStatus } from '@/middleware/status'
   import BackToTop from '@comps/Widgets/BackToTop.vue'
   import axios from 'axios'
   // import 'highlight.js/styles/atom-one-dark.css';

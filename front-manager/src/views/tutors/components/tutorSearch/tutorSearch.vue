@@ -1,55 +1,22 @@
 <template>
   <div class="tutor-search">
-    <!-- 桌面版搜索表单 -->
-    <el-form :model="searchForm" inline class="desktop-form">
+    <!-- 搜索表单 -->
+    <el-form :model="searchForm" class="search-form">
       <el-form-item label="关键词">
         <el-input v-model="searchForm.keyword" placeholder="请输入关键词" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" class="icon-button" @click="handleSearch">
           <el-icon><Search /></el-icon>
-          <span>搜索</span>
+          <span class="button-text">搜索</span>
         </el-button>
         <el-button class="icon-button" @click="handleReset">
           <el-icon><Refresh /></el-icon>
-          <span>重置</span>
+          <span class="button-text">重置</span>
         </el-button>
         <ColumnSelector @change="$emit('column-change', $event)" />
       </el-form-item>
     </el-form>
-
-    <!-- 移动版搜索按钮 -->
-    <div class="mobile-search-btn" @click="showMobileSearch = true">
-      <el-button type="primary" circle class="icon-button">
-        <el-icon><Setting /></el-icon>
-      </el-button>
-    </div>
-
-    <!-- 移动版搜索抽屉 -->
-    <el-drawer
-      v-model="showMobileSearch"
-      direction="btt"
-      size="70%"
-      title="搜索条件"
-      class="mobile-search-drawer"
-    >
-      <el-form :model="searchForm" class="mobile-form">
-        <el-form-item label="关键词">
-          <el-input v-model="searchForm.keyword" placeholder="请输入关键词" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" block class="icon-button" @click="handleMobileSearch">
-            <el-icon><Search /></el-icon>
-            <span>搜索</span>
-          </el-button>
-          <el-button block class="icon-button" @click="handleMobileReset">
-            <el-icon><Refresh /></el-icon>
-            <span>重置</span>
-          </el-button>
-          <ColumnSelector @change="$emit('column-change', $event)" />
-        </el-form-item>
-      </el-form>
-    </el-drawer>
   </div>
 </template>
 

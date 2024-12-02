@@ -163,7 +163,7 @@ export const ALL_COLUMNS: TableColumn[] = [
     comment: '是否对外可见',
     select: {
       type: 'multiple',
-      options: ['是', '否']
+      options: ['1', '0']
     }
   },
   { 
@@ -198,11 +198,11 @@ export const ALL_COLUMNS: TableColumn[] = [
     comment: '创建时间'
   },
   { 
-    prop: 'created_by', 
+    prop: 'created_by_name', 
     label: '创建人', 
     width: 100,
     visible: true,
-    comment: '创建人ID'
+    comment: '创建人姓名'
   },
   { 
     prop: 'updated_at', 
@@ -224,51 +224,25 @@ export const ALL_COLUMNS: TableColumn[] = [
     comment: '最后更新时间'
   },
   { 
-    prop: 'updated_by', 
+    prop: 'updated_by_name', 
     label: '更新人', 
     width: 100,
     visible: true,
-    comment: '更新人ID'
+    comment: '更新人姓名'
   },
   { 
-    prop: 'is_deleted', 
-    label: '删除状态', 
+    prop: 'deal_staff_name', 
+    label: '成交员工', 
     width: 100,
     visible: true,
-    comment: '是否已删除'
+    comment: '成交员工姓名'
   },
   { 
-    prop: 'deleted_by', 
-    label: '删除人', 
+    prop: 'deal_teacher_name', 
+    label: '成交教师', 
     width: 100,
     visible: true,
-    comment: '删除人ID'
-  },
-  { 
-    prop: 'deleted_at', 
-    label: '删除时间', 
-    width: 180,
-    formatter: (row: TutorType) => {
-      if (!row.deleted_at) return ''
-      return new Date(row.deleted_at).toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      })
-    },
-    visible: true,
-    comment: '删除时间'
-  },
-  { 
-    prop: 'order_count', 
-    label: '订单数量', 
-    width: 100,
-    visible: true,
-    comment: '相关订单数量'
+    comment: '成交教师姓名'
   },
   { 
     prop: 'operation', 

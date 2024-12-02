@@ -1,62 +1,65 @@
 @use '../../../../assets/styles/variables' as vars;
 @use '../../../../assets/styles/mixin' as mixin;
 
-
-
 .tutor-search {
-    width: 100%;
+  width: 100%;
+  margin-bottom: 16px;
 
-    .icon-button {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        /* 设置间距 */
+  .icon-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .search-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+    .el-form-item {
+      margin-bottom: 10px;
+      
+      &:last-child {
+        margin-right: 0;
+      }
     }
-
-    .desktop-form {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    // 移动版搜索按钮
-    .mobile-search-btn {
-        display: none;
-        position: fixed;
-        right: 20px;
-        bottom: 20px;
-        z-index: 100;
-    }
-
-    // 移动版表单样式
-    .mobile-form {
-        padding: 20px;
-
-        :deep(.el-form-item) {
-            margin-bottom: 20px;
-        }
-
-        .el-button {
-            margin-bottom: 10px;
-        }
-    }
+  }
 }
 
 // 响应式设计
 @media screen and (max-width: vars.$device-phone) {
-    .tutor-search {
-        .desktop-form {
+  .tutor-search {
+    .search-form {
+      flex-direction: column;
+      
+      .el-form-item {
+        margin-right: 0;
+        width: 100%;
+        
+        .el-input {
+          width: 100%;
+        }
+        
+        &:last-child {
+          display: flex;
+          justify-content: space-between;
+          gap: 8px;
+        }
+        
+        .el-button {
+          flex: 1;
+          padding: 8px 16px;
+          
+          .button-text {
             display: none;
+          }
+          
+          .el-icon {
+            margin: 0;
+            font-size: 16px;
+          }
         }
-
-        .mobile-search-btn {
-            display: block;
-        }
+      }
     }
-
-    :deep(.mobile-search-drawer) {
-        .el-drawer__body {
-            padding: 0;
-        }
-    }
+  }
 }

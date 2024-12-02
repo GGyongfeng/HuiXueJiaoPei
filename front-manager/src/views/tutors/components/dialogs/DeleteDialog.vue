@@ -21,6 +21,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { TutorsService } from '@/api/tutors'
+import { ElMessage } from 'element-plus'
 
 const props = defineProps<{
   visible: boolean
@@ -43,8 +44,12 @@ const handleConfirm = async () => {
   loading.value = true
   try {
     await TutorsService.deleteTutor(props.id)
+    ElMessage.success('删除成功')
     emit('success')
-    handleClose()
+    emit('update:visible', false)
+  } catch (error) {
+    console.error('删除失败:', error)
+    ElMessage.error('删除失败')
   } finally {
     loading.value = false
   }

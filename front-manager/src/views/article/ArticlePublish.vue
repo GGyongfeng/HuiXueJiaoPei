@@ -60,7 +60,7 @@
 <script setup lang="ts">
   import { UploadFilled } from '@element-plus/icons-vue'
   import { ArticleService } from '@/api/articleApi'
-  import { ApiStatus } from '@/utils/http/status'
+  import { ApiStatus } from '@/middleware/status'
   import { ElMessage } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
   import EmojiText from '@/utils/emojo'

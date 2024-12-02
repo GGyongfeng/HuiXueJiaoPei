@@ -2,7 +2,8 @@
   <el-popover placement="bottom" :width="300" trigger="click">
     <template #reference>
       <el-button type="primary" class="icon-button">
-        <span>列表设置</span>
+        <el-icon><Setting /></el-icon>
+        <span class="button-text">列表设置</span>
       </el-button>
     </template>
 

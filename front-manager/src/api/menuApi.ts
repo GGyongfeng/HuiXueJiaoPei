@@ -1,6 +1,6 @@
 import { fourDotsSpinnerSvg } from '@/assets/svg/loading'
 import { ElLoading } from 'element-plus'
-import request from '@/utils/http'
+import request from '@/middleware'
 import { MenuResponse, MenuResult } from './model/menuModel'
 
 /**

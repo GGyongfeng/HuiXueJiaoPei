@@ -51,7 +51,7 @@
   import { ref, onMounted, reactive } from 'vue'
   // import { ArticleService } from '@/api/articleApi'
   import { ArticleCategoryType } from '@/api/model/articleModel'
-  import { ApiStatus } from '@/utils/http/status'
+  import { ApiStatus } from '@/middleware/status'
   import { ElMessage, ElMessageBox, TableInstance } from 'element-plus'
 
   const tableLayout = ref<TableInstance['tableLayout']>('fixed')

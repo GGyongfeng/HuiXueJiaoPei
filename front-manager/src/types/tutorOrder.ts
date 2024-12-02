@@ -35,6 +35,11 @@ export interface TutorType {
   deal_time?: string       // 成交时间
   deal_teacher_id?: number // 成交教师ID
   deal_staff_id?: number   // 成交员工ID
+  created_by_name?: string    // 创建人姓名
+  updated_by_name?: string    // 更新人姓名
+  deleted_by_name?: string    // 删除人姓名
+  deal_teacher_name?: string  // 成交教师姓名
+  deal_staff_name?: string    // 成交员工姓名
 }
 
 /**
