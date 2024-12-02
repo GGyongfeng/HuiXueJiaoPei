@@ -84,7 +84,7 @@ class TutorsModel {
     return result.affectedRows > 0
   }
 
-  // ��删除家教订单
+  // 删除家教订单
   static async delete(id, staffId) {
     const sql = `
       UPDATE tutor_orders 
@@ -102,9 +102,13 @@ class TutorsModel {
     const query = new TutorListQueryBuilder()
     
     return await query
+      // 添加所有筛选条件（如学生性别、年级等）
       .addFilters(filters)
+      // 添加关键词搜索（如订单编号、描述等）
       .addKeywordSearch(filters.keyword)
+      // 添加分页条件（如第几页、每页多少条）
       .addPagination(pagination)
+      // 执行查询并返回结果
       .execute()
   }
 
@@ -112,11 +116,11 @@ class TutorsModel {
   static async getById(id) {
     const sql = `
       SELECT t.*, 
-             c.name as created_by_name,
-             u.name as updated_by_name,
-             d.name as deleted_by_name,
+             c.username as created_by_name,
+             u.username as updated_by_name,
+             d.username as deleted_by_name,
              dt.name as deal_teacher_name,
-             ds.name as deal_staff_name
+             ds.username as deal_staff_name
       FROM tutor_orders t
       LEFT JOIN staff c ON t.created_by = c.id
       LEFT JOIN staff u ON t.updated_by = u.id
@@ -176,15 +180,21 @@ class TutorsModel {
 
   // 在 TutorsModel 类中添加新方法
   static async checkTeacherExists(teacherId) {
-    if (!teacherId) return true  // 如果没有指定教师ID，直接返回true
-    
-    const sql = `
-      SELECT COUNT(*) as count 
-      FROM teachers 
-      WHERE id = ?
-    `
-    const [result] = await db.query(sql, [teacherId])
-    return result.count > 0
+    try {
+      if (!teacherId) return true
+
+      const sql = `
+        SELECT COUNT(*) as count 
+        FROM teachers 
+        WHERE id = ?
+      `
+      const [result] = await db.query(sql, [teacherId])
+      return result.count > 0
+
+    } catch (error) {
+      console.error('检查教师是否存在时发生错误:', error)
+      throw new Error('检查教师失败')
+    }
   }
 }
 

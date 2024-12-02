@@ -1,5 +1,5 @@
 const db = require('../../data/db')
-const { FILTER_FIELDS } = require('../../types/filters')
+const { FILTER_FIELDS, TUTOR_FILTERS, convertBooleanValue } = require('../../types/filters')
 
 /**
  * 家教订单列表查询构建器
@@ -35,21 +35,56 @@ class TutorListQueryBuilder {
    * @returns {TutorListQueryBuilder}
    */
   addFilters(filters) {
-    FILTER_FIELDS.forEach(field => {
+    // 首先添加 is_deleted 条件
+    if (filters.is_deleted !== undefined) {
+      this.sql += ` AND t.is_deleted = ?`
+      this.values.push(filters.is_deleted)
+    }
+
+    // 遍历所有定义的筛选字段配置
+    TUTOR_FILTERS.forEach(filter => {
+      const { field, type } = filter
+
+      // 检查该字段是否有值且不为空数组
       if (filters[field] && filters[field].length > 0) {
+        
+        // 处理特殊字段：subjects 和 order_tags
+        // 这些字段在数据库中以逗号分隔的字符串存储，如："数学,英语"
         if (field === 'subjects' || field === 'order_tags') {
-          // 特殊处理 FIND_IN_SET 的字段
+          // 开始 OR 条件组
           this.sql += ` AND (`
+          // 对数组中的每个值生成 FIND_IN_SET 查询
+          // 例如：FIND_IN_SET('数学', t.subjects) OR FIND_IN_SET('英语', t.subjects)
           this.sql += filters[field].map(() => `FIND_IN_SET(?, t.${field})`).join(' OR ')
           this.sql += `)`
+          // 添加参数值到查询参数数组
           this.values.push(...filters[field])
+        } else if (type === 'boolean') {
+          // 处理布尔类型字段
+          const boolValues = filters[field].map(convertBooleanValue)
+          this.sql += ` AND t.${field} IN (${boolValues.map(() => '?').join(',')})`
+          this.values.push(...boolValues)
         } else {
-          // 普通 IN 查询
-          this.sql += ` AND t.${field} IN (${filters[field].map(() => '?').join(',')})`
+          // 处理普通字段：使用 IN 查询
+          console.log('=== 处理普通字段查询 ===')
+          console.log('字段名:', field)
+          console.log('查询值:', filters[field])
+          
+          // 构建 IN 查询
+          const inClause = ` AND t.${field} IN (${filters[field].map(() => '?').join(',')})`
+          this.sql += inClause
+          
+          // 添加参数值到查询参数数组
           this.values.push(...filters[field])
+          
+          console.log('生成的 SQL 片段:', inClause)
+          console.log('当前完整 SQL:', this.sql)
+          console.log('当前参数值:', this.values)
+          console.log('=== 普通字段处理完成 ===\n')
         }
       }
     })
+    // 返回 this 以支持链式调用
     return this
   }
 
@@ -80,10 +115,31 @@ class TutorListQueryBuilder {
    * @returns {TutorListQueryBuilder}
    */
   addKeywordSearch(keyword) {
+    // console.log('=== 处理关键词搜索 ===')
+    // console.log('接收到的 keyword:', keyword)
+    
     if (keyword) {
-      this.sql += ` AND (t.tutor_code LIKE ? OR t.requirement_desc LIKE ?)`
-      this.values.push(`%${keyword}%`, `%${keyword}%`)
+      const searchClause = ` AND (
+        t.tutor_code LIKE ? 
+        OR t.requirement_desc LIKE ? 
+        OR t.address LIKE ?
+      )`
+      this.sql += searchClause
+      const searchValues = [
+        `%${keyword}%`, 
+        `%${keyword}%`,
+        `%${keyword}%`
+      ]
+      this.values.push(...searchValues)
+      
+      console.log('添加的 SQL 片段:', searchClause)
+      console.log('添加的搜索值:', searchValues)
+      console.log('当前完整 SQL:', this.sql)
+      console.log('当前所有参数:', this.values)
+    } else {
+      // console.log('没有关键词，跳过关键词搜索')
     }
+    
     return this
   }
 
@@ -150,6 +206,9 @@ class TutorListQueryBuilder {
    * @returns {Promise<Object>} 返回查询结果，包含列表数据和总数
    */
   async execute() {
+    // console.log('=== TutorListQueryBuilder.js:最终查询参数 ===')
+    // console.log('最终参数:', this.values)
+    
     // 构建计数查询
     const countSql = `
       SELECT COUNT(*) as total 

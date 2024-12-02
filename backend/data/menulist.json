@@ -17,8 +17,7 @@
                 "id": 101,
                 "title": "分析页",
                 "title_en": "Analysis",
-                "path": "/dashboard/analysis",
-                "showTextBadge": "Hot"
+                "path": "/dashboard/analysis"
             }
         ]
     },
@@ -34,7 +33,8 @@
                 "id": 201,
                 "title": "订单列表",
                 "title_en": "Orders list",
-                "path": "/tutors/list"
+                "path": "/tutors/list",
+                "showTextBadge": "Hot"
             },
             {
                 "id": 202,
@@ -60,7 +60,7 @@
         "children": [
             {
                 "id": 301,
-                "title": "老师列表",
+                "title": "个人中心",
                 "title_en": "User center",
                 "path": "/user/user",
                 "noMenu": true
@@ -68,20 +68,9 @@
             {
                 "id": 302,
                 "title": "老师管理",
-                "title_en": "Account manguage",
-                "path": "/user/account"
-            },
-            {
-                "id": 303,
-                "title": "部门管理",
-                "title_en": "Department manguage",
-                "path": "/user/department"
-            },
-            {
-                "id": 304,
-                "title": "角色权限",
-                "title_en": "Roles",
-                "path": "/user/role"
+                "title_en": "teacher manguage",
+                "path": "/user/account",
+                "showTextBadge": "new"
             }
         ]
     },
@@ -94,53 +83,16 @@
         "name": "Menu",
         "children": [
             {
-                "id": 401,
-                "title": "菜单权限",
-                "title_en": "Menu permissions",
-                "path": "/menu/menu",
-                "icon": "\ue8a4",
-                "authList": [
-                    {
-                        "id": 4011,
-                        "title": "新增",
-                        "auth_mark": "add"
-                    },
-                    {
-                        "id": 4012,
-                        "title": "编辑",
-                        "auth_mark": "edit"
-                    },
-                    {
-                        "id": 4013,
-                        "title": "删除",
-                        "auth_mark": "delete"
-                    }
-                ]
+                "id": 303,
+                "title": "部门管理",
+                "title_en": "Department manguage",
+                "path": "/user/department"
             },
             {
-                "id": 411,
-                "title": "权限控制",
-                "title_en": "Permission control",
-                "path": "/menu/permission",
-                "icon": "\ue831",
-                "showTextBadge": "new",
-                "authList": [
-                    {
-                        "id": 4111,
-                        "title": "新增",
-                        "auth_mark": "add"
-                    },
-                    {
-                        "id": 4112,
-                        "title": "编辑",
-                        "auth_mark": "edit"
-                    },
-                    {
-                        "id": 4113,
-                        "title": "删除",
-                        "auth_mark": "delete"
-                    }
-                ]
+                "id": 304,
+                "title": "角色权限",
+                "title_en": "Roles",
+                "path": "/user/role"
             }
         ]
     },
@@ -223,6 +175,52 @@
                 "title": "服务器管理",
                 "title_en": "Server manguage",
                 "path": "/safeguard/server"
+            },
+            {
+                "id": 411,
+                "title": "权限控制",
+                "title_en": "Permission control",
+                "path": "/menu/permission",
+                "authList": [
+                    {
+                        "id": 4111,
+                        "title": "新增",
+                        "auth_mark": "add"
+                    },
+                    {
+                        "id": 4112,
+                        "title": "编辑",
+                        "auth_mark": "edit"
+                    },
+                    {
+                        "id": 4113,
+                        "title": "删除",
+                        "auth_mark": "delete"
+                    }
+                ]
+            },
+            {
+                "id": 401,
+                "title": "菜单权限",
+                "title_en": "Menu permissions",
+                "path": "/menu/menu",
+                "authList": [
+                    {
+                        "id": 4011,
+                        "title": "新增",
+                        "auth_mark": "add"
+                    },
+                    {
+                        "id": 4012,
+                        "title": "编辑",
+                        "auth_mark": "edit"
+                    },
+                    {
+                        "id": 4013,
+                        "title": "删除",
+                        "auth_mark": "delete"
+                    }
+                ]
             }
         ]
     },

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const TutorsModel = require('../../../../models/tutorsModel')
-
+const TutorsModel = require('@/models/tutorsModel')
+const resCode = require('@/constants/resCode')
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params
@@ -11,7 +11,7 @@ router.delete('/:id', async (req, res) => {
     
     if (success) {
       res.json({
-        code: 0,
+        code: resCode.SUCCESS,
         message: '删除成功'
       })
     } else {
